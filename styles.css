@@ -1,55 +1,140 @@
 :root {
-  color-scheme: light dark;
-  font-family: Arial, sans-serif;
+  font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  color: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: #111827;
-  color: #f3f4f6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0.75rem;
+  background: radial-gradient(circle at top, #264f98 20%, #161145 100%);
 }
 
-.app-shell {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.5rem;
+.phone-shell {
+  width: min(100%, 390px);
+  background: linear-gradient(160deg, #2955a0 20%, #113878 75%);
+  border-radius: 24px;
+  padding: 1.2rem;
+  border: 3px solid #fd7a15;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+.top-brand,
+.page-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.top-brand h1,
+.page-header h1 {
+  margin: 0.2rem 0;
+  letter-spacing: 1px;
+}
+
+.top-brand p,
+.page-header p {
+  margin: 0;
+  color: #f4f1ea;
+}
+
+.brand-ball {
+  font-size: 2rem;
+}
+
+.panel {
+  background: linear-gradient(180deg, #ffd56a 0%, #f8be4b 100%);
+  border-radius: 20px;
+  padding: 1.1rem;
+  color: #1c1c1c;
+}
+
+.panel h2,
+.panel p {
+  margin-top: 0;
+  text-align: center;
+}
+
+.sports-row {
+  text-align: center;
+  font-size: 2.1rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.stacked-actions,
+.form-grid {
   display: grid;
-  gap: 1rem;
-}
-
-.card {
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-form {
-  display: grid;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
 label {
   display: grid;
-  gap: 0.35rem;
-  font-size: 0.95rem;
+  gap: 0.3rem;
+  font-weight: 700;
 }
 
 input,
 select,
-button {
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #4b5563;
-}
-
-button {
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
+button,
+.btn {
   border: none;
+  border-radius: 999px;
+  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
 }
 
-ul {
-  padding-left: 1.25rem;
+input,
+select {
+  border: 2px solid #db8e2b;
+  border-radius: 12px;
+  background: #fff5dc;
+}
+
+.btn,
+button {
+  background: #ff7b1b;
+  color: #fff;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-soft {
+  background: #f19945;
+}
+
+.back-link,
+.text-link {
+  color: #f7f7ff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.text-link {
+  display: block;
+  text-align: center;
+  margin-top: 0.6rem;
+}
+
+#activity-list,
+#schedule-list,
+#gear-list {
+  margin: 0.8rem 0 0;
+  padding-left: 1.2rem;
+}
+
+#gear-list li {
+  margin-bottom: 0.5rem;
+}
+
+#gear-list button {
+  margin-left: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
 }

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J-Athlete | Profile</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="phone-shell">
+    <header class="page-header">
+      <a href="dashboard.html" class="back-link">← Dashboard</a>
+      <h1>Profile</h1>
+      <p id="current-user"></p>
+    </header>
+
+    <section class="panel">
+      <form id="profile-form" class="form-grid">
+        <label>Display Name
+          <input type="text" id="display-name" required />
+        </label>
+        <label>Skill Level
+          <select id="skill-level" required>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Elite">Elite</option>
+          </select>
+        </label>
+        <button type="submit" class="btn">Save Profile</button>
+      </form>
+      <p id="profile-status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

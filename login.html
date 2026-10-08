@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J-Athlete | Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="phone-shell">
+    <header class="page-header">
+      <a href="index.html" class="back-link">← Back</a>
+      <h1>Log In</h1>
+      <p id="current-user"></p>
+    </header>
+
+    <section class="panel">
+      <form id="login-form" class="form-grid">
+        <label>Email
+          <input type="email" id="email" required />
+        </label>
+        <label>Password
+          <input type="password" id="password" required minlength="6" />
+        </label>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <p id="login-status" aria-live="polite"></p>
+      <a class="text-link" href="dashboard.html">Go to dashboard</a>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

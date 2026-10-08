@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J-Athlete | Schedule</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="phone-shell">
+    <header class="page-header">
+      <a href="dashboard.html" class="back-link">← Dashboard</a>
+      <h1>Schedule</h1>
+      <p id="current-user"></p>
+    </header>
+
+    <section class="panel">
+      <form id="schedule-form" class="form-grid">
+        <label>Date
+          <input type="date" id="schedule-date" required />
+        </label>
+        <label>Plan
+          <input type="text" id="schedule-plan" placeholder="Long run, intervals..." required />
+        </label>
+        <button type="submit" class="btn">Add to Schedule</button>
+      </form>
+      <ul id="schedule-list"></ul>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
