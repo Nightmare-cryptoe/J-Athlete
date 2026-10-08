@@ -8,12 +8,25 @@ const defaultState = {
   schedule: [],
 };
 
-const gearCatalog = [
-  { name: "Road Running Shoes", price: "$120" },
-  { name: "Hydration Vest", price: "$75" },
-  { name: "Performance Socks", price: "$18" },
-  { name: "GPS Sports Watch", price: "$199" },
+const teamCatalog = [
+  { name: "Sunrise Racers", sport: "Track & Field", city: "San Mateo", level: "Intermediate" },
+  { name: "Bay Hoops Crew", sport: "Basketball", city: "San Francisco", level: "Advanced" },
+  { name: "Peninsula Strikers", sport: "Soccer", city: "Redwood City", level: "Beginner" },
+  { name: "Golden State Swing", sport: "Baseball", city: "Oakland", level: "Elite" },
+  { name: "Coastline Cyclers", sport: "Cycling", city: "Half Moon Bay", level: "Intermediate" },
 ];
+
+const gearCatalog = [
+  { name: "Road Running Shoes", category: "Footwear", price: 120, rating: 4.8 },
+  { name: "Hydration Vest", category: "Recovery", price: 75, rating: 4.6 },
+  { name: "Performance Socks", category: "Footwear", price: 18, rating: 4.4 },
+  { name: "GPS Sports Watch", category: "Tech", price: 199, rating: 4.9 },
+  { name: "Training Cones Set", category: "Training", price: 26, rating: 4.5 },
+  { name: "Compression Sleeve", category: "Recovery", price: 24, rating: 4.3 },
+];
+
+const authFreePages = new Set(["index.html", "login.html", "signup.html", "about.html"]);
+const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
 const loadState = () => {
   try {
@@ -42,6 +55,21 @@ const setValue = (id, value) => {
   if (node) node.value = value;
 };
 
+const formatPrice = (value) => `$${value.toFixed(2)}`;
+
+const enforceAccess = () => {
+  if (authFreePages.has(currentPage)) return true;
+  if (!state.user) {
+    window.location.href = "login.html";
+    return false;
+  }
+  if (!state.profile && currentPage !== "profile.html") {
+    window.location.href = "profile.html";
+    return false;
+  }
+  return true;
+};
+
 const renderCurrentUser = () => {
   setText("current-user", state.user ? `Signed in: ${state.user.email}` : "Not signed in");
 };
@@ -51,7 +79,10 @@ const renderGear = () => {
   if (!list) return;
 
   list.innerHTML = gearCatalog
-    .map((item, index) => `<li>${item.name} - <strong>${item.price}</strong> <button type="button" data-gear-index="${index}">Buy</button></li>`)
+    .map(
+      (item, index) =>
+        `<li><strong>${item.name}</strong> · ${item.category} · <strong>${formatPrice(item.price)}</strong> · ⭐ ${item.rating.toFixed(1)} <button type="button" data-gear-index="${index}">Buy</button></li>`,
+    )
     .join("");
 
   list.querySelectorAll("button[data-gear-index]").forEach((button) => {
@@ -91,13 +122,14 @@ const syncProfile = () => {
     setValue("display-name", state.profile.displayName);
     setValue("skill-level", state.profile.skillLevel);
     setText("profile-status", `${state.profile.displayName} (${state.profile.skillLevel}) saved.`);
+  } else if (el("profile-status")) {
+    setText("profile-status", "Create your athlete profile to continue to your dashboard.");
   }
 };
 
 const syncTeam = () => {
   if (state.team) {
-    setValue("team-name", state.team);
-    setText("team-status", `Joined team: ${state.team}`);
+    setText("team-status", `Current team: ${state.team}`);
   }
 };
 
@@ -113,10 +145,26 @@ const setupLogin = () => {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const email = el("email").value.trim();
+    const previousEmail = state.user?.email;
     state.user = { email };
+
+    if (!previousEmail || previousEmail !== email) {
+      state.profile = null;
+      state.team = null;
+      state.activities = [];
+      state.schedule = [];
+    }
+
     saveState();
     setText("login-status", `Logged in as ${email}`);
     renderCurrentUser();
+
+    if (!state.profile) {
+      window.location.href = "profile.html";
+      return;
+    }
+
+    window.location.href = "dashboard.html";
   });
 };
 
@@ -136,6 +184,7 @@ const setupSignup = () => {
 
     setText("signup-status", `Welcome ${displayName}! Account created.`);
     renderCurrentUser();
+    window.location.href = "dashboard.html";
   });
 };
 
@@ -152,6 +201,7 @@ const setupProfile = () => {
     state.profile = { displayName, skillLevel };
     saveState();
     setText("profile-status", `${displayName} (${skillLevel}) saved.`);
+    window.location.href = "dashboard.html";
   });
 };
 
@@ -192,19 +242,76 @@ const setupSchedule = () => {
   });
 };
 
+const renderTeamMarketplace = () => {
+  const teamList = el("team-list");
+  const gearGrid = el("team-gear-grid");
+  const searchInput = el("team-search");
+  const gearFilter = el("gear-filter");
+
+  if (!teamList || !gearGrid || !searchInput || !gearFilter) return;
+
+  const teamSearch = searchInput.value.trim().toLowerCase();
+  const selectedCategory = gearFilter.value;
+
+  const visibleTeams = teamCatalog.filter((team) => {
+    const content = `${team.name} ${team.sport} ${team.city} ${team.level}`.toLowerCase();
+    return content.includes(teamSearch);
+  });
+
+  teamList.innerHTML = visibleTeams
+    .map(
+      (team) => `
+      <article class="shop-card team-card">
+        <p class="shop-card-tag">${team.sport}</p>
+        <h3>${team.name}</h3>
+        <p>${team.city} · ${team.level}</p>
+        <button type="button" class="btn" data-team-name="${team.name}">Join Team</button>
+      </article>
+    `,
+    )
+    .join("");
+
+  teamList.querySelectorAll("button[data-team-name]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.team = button.dataset.teamName;
+      saveState();
+      setText("team-status", `Current team: ${state.team}`);
+    });
+  });
+
+  const visibleGear = gearCatalog.filter((item) => selectedCategory === "All" || item.category === selectedCategory);
+
+  gearGrid.innerHTML = visibleGear
+    .map(
+      (item, index) => `
+      <article class="shop-card gear-card">
+        <p class="shop-card-tag">${item.category}</p>
+        <h3>${item.name}</h3>
+        <p><strong>${formatPrice(item.price)}</strong> · ⭐ ${item.rating.toFixed(1)}</p>
+        <button type="button" class="btn" data-market-gear-index="${index}">Add to Cart</button>
+      </article>
+    `,
+    )
+    .join("");
+
+  gearGrid.querySelectorAll("button[data-market-gear-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const gear = visibleGear[Number(button.dataset.marketGearIndex)];
+      alert(`Added ${gear.name} to cart!`);
+    });
+  });
+};
+
 const setupTeam = () => {
-  const form = el("team-form");
-  if (!form) return;
+  const searchInput = el("team-search");
+  const gearFilter = el("gear-filter");
+  if (!searchInput || !gearFilter) return;
 
   syncTeam();
+  renderTeamMarketplace();
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const team = el("team-name").value.trim();
-    state.team = team;
-    saveState();
-    setText("team-status", `Joined team: ${team}`);
-  });
+  searchInput.addEventListener("input", renderTeamMarketplace);
+  gearFilter.addEventListener("change", renderTeamMarketplace);
 };
 
 const setupLogout = () => {
@@ -213,17 +320,21 @@ const setupLogout = () => {
 
   button.addEventListener("click", () => {
     state.user = null;
+    state.profile = null;
     saveState();
     renderCurrentUser();
+    window.location.href = "index.html";
   });
 };
 
-renderCurrentUser();
-renderGear();
-setupLogin();
-setupSignup();
-setupProfile();
-setupTracker();
-setupSchedule();
-setupTeam();
-setupLogout();
+if (enforceAccess()) {
+  renderCurrentUser();
+  renderGear();
+  setupLogin();
+  setupSignup();
+  setupProfile();
+  setupTracker();
+  setupSchedule();
+  setupTeam();
+  setupLogout();
+}
