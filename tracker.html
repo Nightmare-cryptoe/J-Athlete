@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J-Athlete | Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="phone-shell">
+    <header class="page-header">
+      <a href="dashboard.html" class="back-link">← Dashboard</a>
+      <h1>Miles & Time Tracker</h1>
+      <p id="current-user"></p>
+    </header>
+
+    <section class="panel">
+      <form id="activity-form" class="form-grid">
+        <label>Activity
+          <input type="text" id="activity-name" placeholder="Run, Ride..." required />
+        </label>
+        <label>Miles
+          <input type="number" step="0.01" min="0" id="activity-miles" required />
+        </label>
+        <label>Time (minutes)
+          <input type="number" min="0" id="activity-time" required />
+        </label>
+        <button type="submit" class="btn">Add Activity</button>
+      </form>
+      <p><strong>Total Miles:</strong> <span id="total-miles">0</span></p>
+      <p><strong>Total Time:</strong> <span id="total-time">0</span> minutes</p>
+      <ul id="activity-list"></ul>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

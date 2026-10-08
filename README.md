@@ -1,7 +1,8 @@
 # J-Athlete
 
-A lightweight Strava-style starter app for:
-- Login
+A lightweight sports community starter app with multiple pages for:
+- Welcome landing screen
+- Login and sign-up
 - Skill-level profile setup
 - Tracking miles and activity time
 - Managing a training schedule
@@ -10,4 +11,4 @@ A lightweight Strava-style starter app for:
 
 ## Run locally
 
-Because this is a static web app, you can open `index.html` directly in a browser.
+Because this is a static web app, open `/home/runner/work/J-Athlete/J-Athlete/index.html` directly in a browser.

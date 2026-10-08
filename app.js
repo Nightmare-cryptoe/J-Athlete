@@ -32,65 +32,136 @@ const saveState = () => {
 
 const el = (id) => document.getElementById(id);
 
+const setText = (id, value) => {
+  const node = el(id);
+  if (node) node.textContent = value;
+};
+
+const setValue = (id, value) => {
+  const node = el(id);
+  if (node) node.value = value;
+};
+
+const renderCurrentUser = () => {
+  setText("current-user", state.user ? `Signed in: ${state.user.email}` : "Not signed in");
+};
+
 const renderGear = () => {
-  el("gear-list").innerHTML = gearCatalog
-    .map((item) => `<li>${item.name} - <strong>${item.price}</strong> <button type="button">Buy</button></li>`)
+  const list = el("gear-list");
+  if (!list) return;
+
+  list.innerHTML = gearCatalog
+    .map((item, index) => `<li>${item.name} - <strong>${item.price}</strong> <button type="button" data-gear-index="${index}">Buy</button></li>`)
     .join("");
+
+  list.querySelectorAll("button[data-gear-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const gear = gearCatalog[Number(button.dataset.gearIndex)];
+      alert(`Added ${gear.name} to cart!`);
+    });
+  });
 };
 
 const renderActivities = () => {
+  const totalMilesNode = el("total-miles");
+  const totalTimeNode = el("total-time");
+  const listNode = el("activity-list");
+  if (!totalMilesNode || !totalTimeNode || !listNode) return;
+
   const totalMiles = state.activities.reduce((sum, a) => sum + a.miles, 0);
   const totalTime = state.activities.reduce((sum, a) => sum + a.timeMinutes, 0);
-  el("total-miles").textContent = totalMiles.toFixed(2);
-  el("total-time").textContent = String(totalTime);
 
-  el("activity-list").innerHTML = state.activities
+  totalMilesNode.textContent = totalMiles.toFixed(2);
+  totalTimeNode.textContent = String(totalTime);
+  listNode.innerHTML = state.activities
     .map((a) => `<li>${a.name}: ${a.miles.toFixed(2)} mi in ${a.timeMinutes} min</li>`)
     .join("");
 };
 
 const renderSchedule = () => {
+  const listNode = el("schedule-list");
+  if (!listNode) return;
+
   const sorted = [...state.schedule].sort((a, b) => a.date.localeCompare(b.date));
-  el("schedule-list").innerHTML = sorted.map((s) => `<li>${s.date}: ${s.plan}</li>`).join("");
+  listNode.innerHTML = sorted.map((s) => `<li>${s.date}: ${s.plan}</li>`).join("");
 };
 
-const syncForms = () => {
-  if (state.user) {
-    el("login-status").textContent = `Logged in as ${state.user.email}`;
-    el("email").value = state.user.email;
-  }
-
+const syncProfile = () => {
   if (state.profile) {
-    el("display-name").value = state.profile.displayName;
-    el("skill-level").value = state.profile.skillLevel;
-    el("profile-status").textContent = `${state.profile.displayName} (${state.profile.skillLevel}) saved.`;
-  }
-
-  if (state.team) {
-    el("team-status").textContent = `Joined team: ${state.team}`;
-    el("team-name").value = state.team;
+    setValue("display-name", state.profile.displayName);
+    setValue("skill-level", state.profile.skillLevel);
+    setText("profile-status", `${state.profile.displayName} (${state.profile.skillLevel}) saved.`);
   }
 };
 
-const setupHandlers = () => {
-  el("login-form").addEventListener("submit", (event) => {
+const syncTeam = () => {
+  if (state.team) {
+    setValue("team-name", state.team);
+    setText("team-status", `Joined team: ${state.team}`);
+  }
+};
+
+const setupLogin = () => {
+  const form = el("login-form");
+  if (!form) return;
+
+  if (state.user) {
+    setValue("email", state.user.email);
+    setText("login-status", `Logged in as ${state.user.email}`);
+  }
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const email = el("email").value.trim();
     state.user = { email };
     saveState();
-    el("login-status").textContent = `Logged in as ${email}`;
+    setText("login-status", `Logged in as ${email}`);
+    renderCurrentUser();
   });
+};
 
-  el("profile-form").addEventListener("submit", (event) => {
+const setupSignup = () => {
+  const form = el("signup-form");
+  if (!form) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const email = el("signup-email").value.trim();
+    const displayName = el("signup-display-name").value.trim();
+    const skillLevel = el("signup-skill-level").value;
+
+    state.user = { email };
+    state.profile = { displayName, skillLevel };
+    saveState();
+
+    setText("signup-status", `Welcome ${displayName}! Account created.`);
+    renderCurrentUser();
+  });
+};
+
+const setupProfile = () => {
+  const form = el("profile-form");
+  if (!form) return;
+
+  syncProfile();
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const displayName = el("display-name").value.trim();
     const skillLevel = el("skill-level").value;
     state.profile = { displayName, skillLevel };
     saveState();
-    el("profile-status").textContent = `${displayName} (${skillLevel}) saved.`;
+    setText("profile-status", `${displayName} (${skillLevel}) saved.`);
   });
+};
 
-  el("activity-form").addEventListener("submit", (event) => {
+const setupTracker = () => {
+  const form = el("activity-form");
+  if (!form) return;
+
+  renderActivities();
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const name = el("activity-name").value.trim();
     const miles = Number(el("activity-miles").value);
@@ -99,10 +170,17 @@ const setupHandlers = () => {
     state.activities.push({ name, miles, timeMinutes });
     saveState();
     renderActivities();
-    el("activity-form").reset();
+    form.reset();
   });
+};
 
-  el("schedule-form").addEventListener("submit", (event) => {
+const setupSchedule = () => {
+  const form = el("schedule-form");
+  if (!form) return;
+
+  renderSchedule();
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const date = el("schedule-date").value;
     const plan = el("schedule-plan").value.trim();
@@ -110,20 +188,42 @@ const setupHandlers = () => {
     state.schedule.push({ date, plan });
     saveState();
     renderSchedule();
-    el("schedule-form").reset();
+    form.reset();
   });
+};
 
-  el("team-form").addEventListener("submit", (event) => {
+const setupTeam = () => {
+  const form = el("team-form");
+  if (!form) return;
+
+  syncTeam();
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const team = el("team-name").value.trim();
     state.team = team;
     saveState();
-    el("team-status").textContent = `Joined team: ${team}`;
+    setText("team-status", `Joined team: ${team}`);
   });
 };
 
+const setupLogout = () => {
+  const button = el("logout-btn");
+  if (!button) return;
+
+  button.addEventListener("click", () => {
+    state.user = null;
+    saveState();
+    renderCurrentUser();
+  });
+};
+
+renderCurrentUser();
 renderGear();
-renderActivities();
-renderSchedule();
-syncForms();
-setupHandlers();
+setupLogin();
+setupSignup();
+setupProfile();
+setupTracker();
+setupSchedule();
+setupTeam();
+setupLogout();
