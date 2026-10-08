@@ -124,12 +124,14 @@ button {
 
 #activity-list,
 #schedule-list,
-#gear-list {
+#gear-list,
+#creator-list {
   margin: 0.8rem 0 0;
   padding-left: 1.2rem;
 }
 
-#gear-list li {
+#gear-list li,
+#creator-list li {
   margin-bottom: 0.5rem;
 }
 
@@ -137,4 +139,47 @@ button {
   margin-left: 0.4rem;
   padding: 0.3rem 0.7rem;
   font-size: 0.85rem;
+}
+
+.shop-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.shop-panel h2 {
+  margin-bottom: 0;
+}
+
+.shop-toolbar {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  padding: 0.7rem;
+}
+
+.shop-grid {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.shop-card {
+  background: #fff8ea;
+  border: 1px solid #e7b866;
+  border-radius: 14px;
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.shop-card h3,
+.shop-card p {
+  margin: 0;
+  text-align: left;
+}
+
+.shop-card-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  font-weight: 800;
+  color: #8b4902;
+  text-transform: uppercase;
 }

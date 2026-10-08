@@ -3,25 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>J-Athlete | Team</title>
+  <title>J-Athlete | Team & Gear Market</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="phone-shell">
     <header class="page-header">
       <a href="dashboard.html" class="back-link">← Dashboard</a>
-      <h1>Join a Team</h1>
+      <h1>Team & Gear Market</h1>
       <p id="current-user"></p>
     </header>
 
-    <section class="panel">
-      <form id="team-form" class="form-grid">
-        <label>Team Name
-          <input type="text" id="team-name" placeholder="Sunrise Racers" required />
-        </label>
-        <button type="submit" class="btn">Join Team</button>
-      </form>
+    <section class="panel shop-panel">
       <p id="team-status" aria-live="polite"></p>
+
+      <div class="shop-toolbar form-grid">
+        <label>Search Teams
+          <input type="text" id="team-search" placeholder="Search by team, city, or sport" />
+        </label>
+        <label>Gear Category
+          <select id="gear-filter">
+            <option value="All">All</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Recovery">Recovery</option>
+            <option value="Tech">Tech</option>
+            <option value="Training">Training</option>
+          </select>
+        </label>
+      </div>
+
+      <h2>Browse Teams</h2>
+      <div id="team-list" class="shop-grid"></div>
+
+      <h2>Sports Gear Deals</h2>
+      <div id="team-gear-grid" class="shop-grid"></div>
     </section>
   </main>
   <script src="app.js"></script>
