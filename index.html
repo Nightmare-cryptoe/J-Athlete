@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J-Athlete</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header>
+      <h1>J-Athlete</h1>
+      <p>Track your training and gear like a simple Strava-style app.</p>
+    </header>
+
+    <section class="card" id="login-section">
+      <h2>Login</h2>
+      <form id="login-form">
+        <label>
+          Email
+          <input type="email" id="email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" required minlength="6" />
+        </label>
+        <button type="submit">Login</button>
+      </form>
+      <p id="login-status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" id="profile-section">
+      <h2>Profile</h2>
+      <form id="profile-form">
+        <label>
+          Display Name
+          <input type="text" id="display-name" required />
+        </label>
+        <label>
+          Skill Level
+          <select id="skill-level" required>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Elite">Elite</option>
+          </select>
+        </label>
+        <button type="submit">Save Profile</button>
+      </form>
+      <p id="profile-status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" id="tracker-section">
+      <h2>Miles & Time Tracker</h2>
+      <form id="activity-form">
+        <label>
+          Activity
+          <input type="text" id="activity-name" placeholder="Run, Ride..." required />
+        </label>
+        <label>
+          Miles
+          <input type="number" step="0.01" min="0" id="activity-miles" required />
+        </label>
+        <label>
+          Time (minutes)
+          <input type="number" min="0" id="activity-time" required />
+        </label>
+        <button type="submit">Add Activity</button>
+      </form>
+      <p><strong>Total Miles:</strong> <span id="total-miles">0</span></p>
+      <p><strong>Total Time:</strong> <span id="total-time">0</span> minutes</p>
+      <ul id="activity-list"></ul>
+    </section>
+
+    <section class="card" id="schedule-section">
+      <h2>Schedule</h2>
+      <form id="schedule-form">
+        <label>
+          Date
+          <input type="date" id="schedule-date" required />
+        </label>
+        <label>
+          Plan
+          <input type="text" id="schedule-plan" placeholder="Long run, intervals..." required />
+        </label>
+        <button type="submit">Add to Schedule</button>
+      </form>
+      <ul id="schedule-list"></ul>
+    </section>
+
+    <section class="card" id="team-section">
+      <h2>Join a Team</h2>
+      <form id="team-form">
+        <label>
+          Team Name
+          <input type="text" id="team-name" placeholder="Sunrise Racers" required />
+        </label>
+        <button type="submit">Join Team</button>
+      </form>
+      <p id="team-status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" id="gear-section">
+      <h2>Buy Gear</h2>
+      <ul id="gear-list"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
