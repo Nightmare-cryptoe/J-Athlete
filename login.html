@@ -16,11 +16,11 @@
 
     <section class="panel">
       <form id="login-form" class="form-grid">
-        <label>Email
-          <input type="email" id="email" required />
+        <label>Username
+          <input type="text" id="username" required minlength="3" autocomplete="username" />
         </label>
         <label>Password
-          <input type="password" id="password" required minlength="6" />
+          <input type="password" id="password" required minlength="6" autocomplete="current-password" />
         </label>
         <button type="submit" class="btn">Login</button>
       </form>
