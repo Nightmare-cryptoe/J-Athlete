@@ -16,11 +16,17 @@
 
     <section class="panel">
       <form id="signup-form" class="form-grid">
-        <label>Email
-          <input type="email" id="signup-email" required />
+        <label>Username
+          <input type="text" id="signup-username" required minlength="3" autocomplete="username" />
+        </label>
+        <label>Email (optional)
+          <input type="email" id="signup-email" />
         </label>
         <label>Password
-          <input type="password" id="signup-password" required minlength="6" />
+          <input type="password" id="signup-password" required minlength="6" autocomplete="new-password" />
+        </label>
+        <label>Confirm Password
+          <input type="password" id="signup-confirm-password" required minlength="6" autocomplete="new-password" />
         </label>
         <label>Display Name
           <input type="text" id="signup-display-name" required />

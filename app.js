@@ -2,6 +2,7 @@ const storageKey = "j-athlete-data";
 
 const defaultState = {
   user: null,
+  accounts: [],
   profile: null,
   team: null,
   activities: [],
@@ -43,6 +44,87 @@ const saveState = () => {
   localStorage.setItem(storageKey, JSON.stringify(state));
 };
 
+const normalizeUsername = (value) => value.trim().toLowerCase();
+
+const emptyAccountData = () => ({
+  profile: null,
+  team: null,
+  activities: [],
+  schedule: [],
+});
+
+const findAccountByUsername = (username) =>
+  state.accounts.find((account) => account.username === normalizeUsername(username));
+
+const loadAccountDataIntoState = (account) => {
+  state.profile = account.profile ? { ...account.profile } : null;
+  state.team = account.team ?? null;
+  state.activities = Array.isArray(account.activities) ? [...account.activities] : [];
+  state.schedule = Array.isArray(account.schedule) ? [...account.schedule] : [];
+};
+
+const persistStateToCurrentAccount = () => {
+  if (!state.user?.username) return;
+
+  const account = findAccountByUsername(state.user.username);
+  if (!account) return;
+
+  account.profile = state.profile ? { ...state.profile } : null;
+  account.team = state.team ?? null;
+  account.activities = [...state.activities];
+  account.schedule = [...state.schedule];
+};
+
+const migrateLegacyState = () => {
+  let changed = false;
+
+  if (!Array.isArray(state.accounts)) {
+    state.accounts = [];
+    changed = true;
+  }
+
+  if (state.user?.email && !state.user.username) {
+    const derivedUsername = normalizeUsername(state.user.email.split("@")[0] || state.user.email);
+    let account = findAccountByUsername(derivedUsername);
+
+    if (!account) {
+      account = {
+        username: derivedUsername,
+        email: state.user.email,
+        password: "athlete123",
+        ...emptyAccountData(),
+      };
+      state.accounts.push(account);
+      changed = true;
+    }
+
+    account.profile = state.profile ? { ...state.profile } : account.profile;
+    account.team = state.team ?? account.team ?? null;
+    account.activities = state.activities.length ? [...state.activities] : account.activities ?? [];
+    account.schedule = state.schedule.length ? [...state.schedule] : account.schedule ?? [];
+    state.user = { username: account.username, email: account.email || "" };
+    changed = true;
+  }
+
+  if (state.user?.username) {
+    const account = findAccountByUsername(state.user.username);
+    if (account) {
+      state.user = { username: account.username, email: account.email || "" };
+      loadAccountDataIntoState(account);
+      changed = true;
+    } else {
+      state.user = null;
+      state.profile = null;
+      state.team = null;
+      state.activities = [];
+      state.schedule = [];
+      changed = true;
+    }
+  }
+
+  if (changed) saveState();
+};
+
 const el = (id) => document.getElementById(id);
 
 const setText = (id, value) => {
@@ -71,7 +153,7 @@ const enforceAccess = () => {
 };
 
 const renderCurrentUser = () => {
-  setText("current-user", state.user ? `Signed in: ${state.user.email}` : "Not signed in");
+  setText("current-user", state.user ? `Signed in: ${state.user.username}` : "Not signed in");
 };
 
 const renderGear = () => {
@@ -137,26 +219,26 @@ const setupLogin = () => {
   const form = el("login-form");
   if (!form) return;
 
-  if (state.user) {
-    setValue("email", state.user.email);
-    setText("login-status", `Logged in as ${state.user.email}`);
+  if (state.user?.username) {
+    setValue("username", state.user.username);
+    setText("login-status", `Logged in as ${state.user.username}`);
   }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const email = el("email").value.trim();
-    const previousEmail = state.user?.email;
-    state.user = { email };
+    const username = normalizeUsername(el("username").value);
+    const password = el("password").value;
+    const account = findAccountByUsername(username);
 
-    if (!previousEmail || previousEmail !== email) {
-      state.profile = null;
-      state.team = null;
-      state.activities = [];
-      state.schedule = [];
+    if (!account || account.password !== password) {
+      setText("login-status", "Invalid username or password.");
+      return;
     }
 
+    state.user = { username: account.username, email: account.email || "" };
+    loadAccountDataIntoState(account);
     saveState();
-    setText("login-status", `Logged in as ${email}`);
+    setText("login-status", `Logged in as ${account.username}`);
     renderCurrentUser();
 
     if (!state.profile) {
@@ -174,15 +256,42 @@ const setupSignup = () => {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    const username = normalizeUsername(el("signup-username").value);
     const email = el("signup-email").value.trim();
+    const password = el("signup-password").value;
+    const confirmPassword = el("signup-confirm-password").value;
     const displayName = el("signup-display-name").value.trim();
     const skillLevel = el("signup-skill-level").value;
 
-    state.user = { email };
-    state.profile = { displayName, skillLevel };
+    if (username.length < 3) {
+      setText("signup-status", "Username must be at least 3 characters.");
+      return;
+    }
+
+    if (findAccountByUsername(username)) {
+      setText("signup-status", "That username is already taken.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setText("signup-status", "Passwords do not match.");
+      return;
+    }
+
+    const account = {
+      username,
+      email,
+      password,
+      ...emptyAccountData(),
+      profile: { displayName, skillLevel },
+    };
+
+    state.accounts.push(account);
+    state.user = { username, email };
+    loadAccountDataIntoState(account);
     saveState();
 
-    setText("signup-status", `Welcome ${displayName}! Account created.`);
+    setText("signup-status", `Welcome ${displayName}! Account created for ${username}.`);
     renderCurrentUser();
     window.location.href = "dashboard.html";
   });
@@ -199,6 +308,7 @@ const setupProfile = () => {
     const displayName = el("display-name").value.trim();
     const skillLevel = el("skill-level").value;
     state.profile = { displayName, skillLevel };
+    persistStateToCurrentAccount();
     saveState();
     setText("profile-status", `${displayName} (${skillLevel}) saved.`);
     window.location.href = "dashboard.html";
@@ -218,6 +328,7 @@ const setupTracker = () => {
     const timeMinutes = Number(el("activity-time").value);
 
     state.activities.push({ name, miles, timeMinutes });
+    persistStateToCurrentAccount();
     saveState();
     renderActivities();
     form.reset();
@@ -236,6 +347,7 @@ const setupSchedule = () => {
     const plan = el("schedule-plan").value.trim();
 
     state.schedule.push({ date, plan });
+    persistStateToCurrentAccount();
     saveState();
     renderSchedule();
     form.reset();
@@ -274,6 +386,7 @@ const renderTeamMarketplace = () => {
   teamList.querySelectorAll("button[data-team-name]").forEach((button) => {
     button.addEventListener("click", () => {
       state.team = button.dataset.teamName;
+      persistStateToCurrentAccount();
       saveState();
       setText("team-status", `Current team: ${state.team}`);
     });
@@ -321,11 +434,16 @@ const setupLogout = () => {
   button.addEventListener("click", () => {
     state.user = null;
     state.profile = null;
+    state.team = null;
+    state.activities = [];
+    state.schedule = [];
     saveState();
     renderCurrentUser();
     window.location.href = "index.html";
   });
 };
+
+migrateLegacyState();
 
 if (enforceAccess()) {
   renderCurrentUser();

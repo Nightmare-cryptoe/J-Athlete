@@ -1,6 +1,6 @@
 :root {
   font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
-  color: #ffffff;
+  color: #1c2430;
 }
 
 * {
@@ -13,16 +13,16 @@ body {
   display: flex;
   justify-content: center;
   padding: 1.5rem 0.75rem;
-  background: radial-gradient(circle at top, #264f98 20%, #161145 100%);
+  background: radial-gradient(circle at top, #dce8f7 10%, #bdd0ea 100%);
 }
 
 .phone-shell {
   width: min(100%, 390px);
-  background: linear-gradient(160deg, #2955a0 20%, #113878 75%);
-  border-radius: 24px;
+  background: #f8fbff;
+  border-radius: 18px;
   padding: 1.2rem;
-  border: 3px solid #fd7a15;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+  border: 1px solid #b4c5dc;
+  box-shadow: 0 10px 24px rgba(26, 44, 70, 0.18);
   animation: shell-rise 460ms ease-out both;
 }
 
@@ -41,20 +41,30 @@ body {
 .top-brand p,
 .page-header p {
   margin: 0;
-  color: #f4f1ea;
+  color: #57616e;
 }
 
 .brand-ball {
-  font-size: 2rem;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: #1f5ea8;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
   animation: ball-bob 2.4s ease-in-out infinite;
 }
 
 .panel {
-  background: linear-gradient(180deg, #ffd56a 0%, #f8be4b 100%);
-  border-radius: 20px;
+  background: #ffffff;
+  border-radius: 14px;
   padding: 1.1rem;
   color: #1c1c1c;
+  border: 1px solid #d7e1ef;
   animation: section-fade 420ms ease-out both;
 }
 
@@ -66,7 +76,9 @@ body {
 
 .sports-row {
   text-align: center;
-  font-size: 2.1rem;
+  font-size: 0.95rem;
+  color: #4f5b67;
+  font-weight: 700;
   margin: 0.5rem 0 1rem;
 }
 
@@ -94,14 +106,14 @@ button,
 
 input,
 select {
-  border: 2px solid #db8e2b;
+  border: 1px solid #b4c4d9;
   border-radius: 12px;
-  background: #fff5dc;
+  background: #f7fbff;
 }
 
 .btn,
 button {
-  background: #ff7b1b;
+  background: #1f5ea8;
   color: #fff;
   font-weight: 800;
   text-align: center;
@@ -137,12 +149,12 @@ select:focus-visible {
 }
 
 .btn-soft {
-  background: #f19945;
+  background: #5f7ca5;
 }
 
 .back-link,
 .text-link {
-  color: #f7f7ff;
+  color: #1f5ea8;
   font-weight: 700;
   text-decoration: none;
 }
@@ -182,7 +194,7 @@ select:focus-visible {
 }
 
 .shop-toolbar {
-  background: rgba(255, 255, 255, 0.45);
+  background: #f3f7fc;
   border-radius: 14px;
   padding: 0.7rem;
 }
@@ -193,8 +205,8 @@ select:focus-visible {
 }
 
 .shop-card {
-  background: #fff8ea;
-  border: 1px solid #e7b866;
+  background: #ffffff;
+  border: 1px solid #d7e1ef;
   border-radius: 14px;
   padding: 0.8rem;
   display: grid;
@@ -217,7 +229,7 @@ select:focus-visible {
   font-size: 0.75rem;
   letter-spacing: 0.4px;
   font-weight: 800;
-  color: #8b4902;
+  color: #37506f;
   text-transform: uppercase;
 }
 
